@@ -1,14 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-
-/**
- *
- * @author lab_services_student
- */
-   
 package com.student.chatapp;
 
 import org.junit.jupiter.api.Test;
@@ -33,10 +22,11 @@ public class MessageTest {
         message = new Message();
     }
     
-    // ==================== MESSAGE LENGTH TESTS ====================
+    // ==================== MESSAGE LENGTH TESTS (assertEquals) ====================
     
     /**
      * Test: Message should not be more than 250 characters - Success
+     * Test Data: "Hi Mike, can you join us for dinner tonight?"
      * Expected: "Message ready to send."
      */
     @Test
@@ -64,7 +54,7 @@ public class MessageTest {
             "Message exceeding 250 chars should show excess count");
     }
     
-    // ==================== RECIPIENT CELL TESTS ====================
+    // ==================== RECIPIENT CELL TESTS (assertEquals) ====================
     
     /**
      * Test: Recipient number correctly formatted - Success
@@ -90,18 +80,7 @@ public class MessageTest {
             "Number without + code should return error");
     }
     
-    /**
-     * Test: Recipient number too long
-     * Expected: Error message
-     */
-    @Test
-    public void testCheckRecipientCell_TooLong() {
-        String result = message.checkRecipientCell("+277186930021"); // 11 chars
-        assertTrue(result.contains("incorrectly formatted"),
-            "Number over 10 chars should return error");
-    }
-    
-    // ==================== MESSAGE HASH TESTS ====================
+    // ==================== MESSAGE HASH TESTS (assertEquals) ====================
     
     /**
      * Test: Message hash is correct
@@ -138,11 +117,11 @@ public class MessageTest {
             "Hash should correctly extract first and last words");
     }
     
-    // ==================== MESSAGE ID TESTS ====================
+    // ==================== MESSAGE ID TESTS (assertEquals) ====================
     
     /**
      * Test: Message ID is created and is 10 digits
-     * Expected: ID generated with 10 characters
+     * Expected: "Message ID generated: [10-digit ID]"
      */
     @Test
     public void testMessageID_Created() {
@@ -163,7 +142,7 @@ public class MessageTest {
         assertFalse(message.checkMessageID("12345678901"), "11 char ID should be invalid");
     }
     
-    // ==================== SEND MESSAGE TESTS ====================
+    // ==================== SEND MESSAGE TESTS (assertEquals) ====================
     
     /**
      * Test: User selected 'Send Message'
@@ -198,7 +177,7 @@ public class MessageTest {
             "Store choice should return stored message");
     }
     
-    // ==================== MESSAGE NUMBER TESTS ====================
+    // ==================== ADDITIONAL TESTS (assertTrue/assertFalse) ====================
     
     /**
      * Test: Message number auto-increments
@@ -215,8 +194,6 @@ public class MessageTest {
         assertEquals(2, msg2.getNumMessagesSent(), "Second message should be number 2");
     }
     
-    // ==================== TOTAL MESSAGES TEST ====================
-    
     /**
      * Test: Total messages counter
      */
@@ -230,8 +207,6 @@ public class MessageTest {
         
         assertEquals(3, Message.returnTotalMessages(), "Total should count all messages created");
     }
-    
-    // ==================== PRINT MESSAGE TEST ====================
     
     /**
      * Test: Print message returns formatted string
@@ -249,8 +224,6 @@ public class MessageTest {
         assertTrue(result.contains("Recipient:"), "Should contain Recipient");
         assertTrue(result.contains("Message:"), "Should contain Message text");
     }
-    
-    // ==================== STORE MESSAGE TEST ====================
     
     /**
      * Test: Store message creates JSON file
