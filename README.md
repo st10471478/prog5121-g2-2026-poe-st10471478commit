@@ -49,7 +49,6 @@ Oracle (2024) Java Platform, Standard Edition 17 API Specification. Available at
 Regexlib (2024) South African phone number validation. Available at: https://regexlib.com/Search.aspx?k=phone (Accessed: 11 April 2026).
 
 <img width="1283" height="579" alt="Screenshot 2026-06-25 174428" src="https://github.com/user-attachments/assets/78777c44-b68f-4827-9faf-45120bd7af19" />
-<img width="654" height="303" alt="Screenshot 2026-06-25 163502" src="https://github.com/user-attachments/assets/90a9c03a-43bf-45e8-9eb9-21993aa3344e" />
 <img width="1365" height="339" alt="Screenshot 2026-06-25 152717" src="https://github.com/user-attachments/assets/9673ed47-8b4b-4b29-90df-bf9f915ec292" />
 <img width="1273" height="579" alt="Screenshot 2026-06-25 174717" src="https://github.com/user-attachments/assets/6fdee45b-4c41-4bd6-ad32-f066a6faa414" />
 <img width="1274" height="577" alt="Screenshot 2026-06-25 174657" src="https://github.com/user-attachments/assets/fa35a24c-fe23-4568-94cd-d2836c6f8848" />
