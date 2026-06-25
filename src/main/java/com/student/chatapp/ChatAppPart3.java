@@ -7,9 +7,8 @@ package com.student.chatapp;
 import java.util.Scanner;
 
 /**
- * Main application class for Part 3
- * Final application combining Part 1, 2, and 3
- * Handles arrays, reports, and JSON file reading
+ * Main application class for Part 3 - FINAL COMPLETE APPLICATION
+ * Combines Part 1 (Login), Part 2 (Messages), and Part 3 (Arrays/Reports)
  * 
  * @author Student
  * @version 1.0
@@ -20,11 +19,8 @@ public class ChatAppPart3 {
         Scanner scanner = new Scanner(System.in);
         MessageManager manager = new MessageManager();
         
-        // Load previously stored messages from JSON
+        // Load previously stored messages from JSON file
         int loaded = manager.loadFromJsonFile();
-        if (loaded > 0) {
-            System.out.println("Loaded " + loaded + " messages from storage.");
-        }
         
         System.out.println("========================================");
         System.out.println("    WELCOME TO CHAT APP - FINAL");
@@ -32,26 +28,200 @@ public class ChatAppPart3 {
         System.out.println("========================================");
         System.out.println();
         
-        // Run Part 1 - Registration and Login
+        // ============================================
+        // PART 1: REGISTRATION AND LOGIN
+        // ============================================
         System.out.println("--- STEP 1: REGISTRATION AND LOGIN ---");
         System.out.println();
         
-        // Simulate Part 1 login (or call it directly)
-        boolean loggedIn = runPart1Login(scanner);
+        Login login = new Login();
         
-        if (!loggedIn) {
-            System.out.println("Login failed. Exiting application.");
+        // Get user personal details
+        System.out.print("Enter First Name: ");
+        String firstName = scanner.nextLine();
+        login.setFirstName(firstName);
+        
+        System.out.print("Enter Last Name: ");
+        String lastName = scanner.nextLine();
+        login.setLastName(lastName);
+        
+        System.out.println();
+        System.out.println("--- Registration ---");
+        
+        // Registration phase - loop until valid
+        boolean registered = false;
+        while (!registered) {
+            System.out.print("Enter Username (max 5 chars with underscore, e.g., kyl_1): ");
+            String username = scanner.nextLine();
+            
+            System.out.print("Enter Password (8+ chars, capital, number, special): ");
+            String password = scanner.nextLine();
+            
+            System.out.print("Enter Cell Phone (+27XXXXXXXXX, e.g., +27838968976): ");
+            String cellPhone = scanner.nextLine();
+            
+            System.out.println();
+            String result = login.registerUser(username, password, cellPhone);
+            System.out.println(result);
+            System.out.println();
+            
+            // Check if all validations passed
+            if (login.getUsername() != null && login.getPassword() != null && login.getCellPhone() != null) {
+                registered = true;
+                System.out.println("Registration successful! You can now login.");
+            } else {
+                System.out.println("Registration failed. Please try again with correct format.");
+                System.out.println();
+            }
+        }
+        
+        System.out.println();
+        System.out.println("--- Login ---");
+        
+        // Login phase - loop until successful or max attempts
+        boolean loginSuccess = false;
+        int attempts = 0;
+        final int MAX_ATTEMPTS = 3;
+        
+        while (!loginSuccess && attempts < MAX_ATTEMPTS) {
+            System.out.print("Enter Username: ");
+            String loginUser = scanner.nextLine();
+            
+            System.out.print("Enter Password: ");
+            String loginPass = scanner.nextLine();
+            
+            loginSuccess = login.loginUser(loginUser, loginPass);
+            String statusMessage = login.returnLoginStatus(loginSuccess);
+            System.out.println(statusMessage);
+            
+            if (!loginSuccess) {
+                attempts++;
+                int remaining = MAX_ATTEMPTS - attempts;
+                if (remaining > 0) {
+                    System.out.println("Attempts remaining: " + remaining);
+                }
+            }
+        }
+        
+        if (!loginSuccess) {
+            System.out.println("Maximum login attempts reached. Account locked.");
+            System.out.println("Please restart the application.");
             scanner.close();
             return;
         }
         
-        // Run Part 2 - Send Messages
         System.out.println();
+        System.out.println("========================================");
+        System.out.println("    LOGIN SUCCESSFUL - PART 1 COMPLETE");
+        System.out.println("========================================");
+        System.out.println();
+        
+        // ============================================
+        // PART 2: SEND MESSAGES
+        // ============================================
         System.out.println("--- STEP 2: SEND MESSAGES ---");
         System.out.println();
-        runPart2Messages(scanner, manager);
         
-        // Part 3 - Stored Messages Menu
+        System.out.print("How many messages do you want to enter? ");
+        int numMessages = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        
+        // Create array to store messages temporarily
+        Message[] messages = new Message[numMessages];
+        
+        // For loop to enter assigned number of messages
+        for (int i = 0; i < numMessages; i++) {
+            System.out.println();
+            System.out.println("Message " + (i + 1) + " of " + numMessages);
+            
+            // Create new message object (auto-generates ID and increments counter)
+            messages[i] = new Message();
+            
+            // Get recipient cell number
+            System.out.print("Enter Recipient Number (+27XXXXXXXX): ");
+            String recipient = scanner.nextLine();
+            
+            // Validate recipient
+            String cellCheck = messages[i].checkRecipientCell(recipient);
+            System.out.println(cellCheck);
+            
+            // If invalid, retry this message
+            if (!cellCheck.contains("successfully")) {
+                System.out.println("Please try again.");
+                i--; // Decrement to retry this iteration
+                continue;
+            }
+            messages[i].setRecipient(recipient);
+            
+            // Get message text
+            System.out.print("Enter Message: ");
+            String text = scanner.nextLine();
+            
+            // Validate message length
+            String lengthCheck = messages[i].checkMessageLength(text);
+            System.out.println(lengthCheck);
+            
+            // If too long, retry this message
+            if (lengthCheck.contains("exceeds")) {
+                System.out.println("Please try again.");
+                i--; // Decrement to retry this iteration
+                continue;
+            }
+            messages[i].setMessageText(text);
+            
+            // Create message hash using string manipulation
+            String hash = messages[i].createMessageHash(
+                messages[i].getMessageId(),
+                messages[i].getNumMessagesSent(),
+                text
+            );
+            messages[i].setMessageHash(hash);
+            
+            // Display message details before action
+            System.out.println();
+            System.out.println("1. Send  2. Disregard  3. Store");
+            System.out.print("Choice: ");
+            int action = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+            
+            String result;
+            switch(action) {
+                case 1:
+                    result = messages[i].sendMessage("send");
+                    System.out.println(result);
+                    // Add to SentMessages array
+                    manager.addSentMessage(text, hash, messages[i].getMessageId(), recipient);
+                    break;
+                case 2:
+                    result = messages[i].sendMessage("disregard");
+                    System.out.println(result);
+                    // Add to DisregardedMessages array
+                    manager.addDisregardedMessage(text);
+                    break;
+                case 3:
+                    result = messages[i].sendMessage("store");
+                    System.out.println(result);
+                    // Store to JSON file and add to StoredMessages array
+                    messages[i].storeMessage();
+                    manager.addStoredMessage(text, hash, messages[i].getMessageId(), recipient);
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+            
+            // Display full message details after action
+            System.out.println();
+            System.out.println("--- Full Message Details ---");
+            System.out.println(messages[i].printMessage());
+            System.out.println("----------------------------");
+        }
+        
+        System.out.println();
+        System.out.println("Total messages: " + Message.returnTotalMessages());
+        
+        // ============================================
+        // PART 3: STORED MESSAGES MENU
+        // ============================================
         boolean running = true;
         
         while (running) {
@@ -115,142 +285,5 @@ public class ChatAppPart3 {
         }
         
         scanner.close();
-    }
-    
-    /**
-     * Simulates Part 1 login process
-     * @param scanner Scanner for input
-     * @return true if login successful
-     */
-    private static boolean runPart1Login(Scanner scanner) {
-        Login login = new Login();
-        
-        System.out.print("Enter First Name: ");
-        String firstName = scanner.nextLine();
-        login.setFirstName(firstName);
-        
-        System.out.print("Enter Last Name: ");
-        String lastName = scanner.nextLine();
-        login.setLastName(lastName);
-        
-        System.out.println();
-        System.out.println("--- Registration ---");
-        
-        boolean registered = false;
-        while (!registered) {
-            System.out.print("Username (max 5 chars with _): ");
-            String username = scanner.nextLine();
-            
-            System.out.print("Password (8+ chars, cap, num, special): ");
-            String password = scanner.nextLine();
-            
-            System.out.print("Cell Phone (+27XXXXXXXXX): ");
-            String cellPhone = scanner.nextLine();
-            
-            String result = login.registerUser(username, password, cellPhone);
-            System.out.println("\n" + result);
-            
-            if (login.getUsername() != null && login.getPassword() != null && login.getCellPhone() != null) {
-                registered = true;
-                System.out.println("Registration successful!");
-            } else {
-                System.out.println("Please try again.\n");
-            }
-        }
-        
-        System.out.println();
-        System.out.println("--- Login ---");
-        
-        boolean loginSuccess = false;
-        int attempts = 0;
-        
-        while (!loginSuccess && attempts < 3) {
-            System.out.print("Username: ");
-            String user = scanner.nextLine();
-            
-            System.out.print("Password: ");
-            String pass = scanner.nextLine();
-            
-            loginSuccess = login.loginUser(user, pass);
-            System.out.println(login.returnLoginStatus(loginSuccess));
-            
-            if (!loginSuccess) {
-                attempts++;
-            }
-        }
-        
-        return loginSuccess;
-    }
-    
-    /**
-     * Simulates Part 2 message sending
-     * @param scanner Scanner for input
-     * @param manager MessageManager to store messages
-     */
-    private static void runPart2Messages(Scanner scanner, MessageManager manager) {
-        System.out.print("How many messages do you want to enter? ");
-        int numMessages = scanner.nextInt();
-        scanner.nextLine();
-        
-        for (int i = 0; i < numMessages; i++) {
-            System.out.println();
-            System.out.println("Message " + (i + 1) + " of " + numMessages);
-            
-            Message msg = new Message();
-            
-            System.out.print("Recipient (+27XXXXXXXX): ");
-            String recipient = scanner.nextLine();
-            String cellCheck = msg.checkRecipientCell(recipient);
-            System.out.println(cellCheck);
-            
-            if (!cellCheck.contains("successfully")) {
-                i--;
-                continue;
-            }
-            msg.setRecipient(recipient);
-            
-            System.out.print("Message text: ");
-            String text = scanner.nextLine();
-            String lengthCheck = msg.checkMessageLength(text);
-            System.out.println(lengthCheck);
-            
-            if (lengthCheck.contains("exceeds")) {
-                i--;
-                continue;
-            }
-            msg.setMessageText(text);
-            
-            String hash = msg.createMessageHash(msg.getMessageId(), msg.getNumMessagesSent(), text);
-            msg.setMessageHash(hash);
-            
-            System.out.println();
-            System.out.println("1. Send  2. Disregard  3. Store");
-            System.out.print("Choice: ");
-            int action = scanner.nextInt();
-            scanner.nextLine();
-            
-            switch(action) {
-                case 1:
-                    System.out.println(msg.sendMessage("send"));
-                    manager.addSentMessage(text, hash, msg.getMessageId(), recipient);
-                    break;
-                case 2:
-                    System.out.println(msg.sendMessage("disregard"));
-                    manager.addDisregardedMessage(text);
-                    break;
-                case 3:
-                    System.out.println(msg.sendMessage("store"));
-                    msg.storeMessage();
-                    manager.addStoredMessage(text, hash, msg.getMessageId(), recipient);
-                    break;
-                default:
-                    System.out.println("Invalid choice.");
-            }
-            
-            System.out.println("\n" + msg.printMessage());
-        }
-        
-        System.out.println();
-        System.out.println("Total messages: " + Message.returnTotalMessages());
     }
 }
