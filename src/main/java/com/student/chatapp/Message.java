@@ -132,7 +132,7 @@ public class Message {
         }
     }
     
-    /**
+        /**
      * Stores message to JSON file
      * Research: JSON.org (2024) JSON in Java. Available at: https://github.com/stleary/JSON-java
      * 
