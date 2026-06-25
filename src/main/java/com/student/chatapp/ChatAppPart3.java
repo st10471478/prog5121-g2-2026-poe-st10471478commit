@@ -21,6 +21,9 @@ public class ChatAppPart3 {
         
         // Load previously stored messages from JSON file
         int loaded = manager.loadFromJsonFile();
+        if (loaded > 0) {
+            System.out.println("Loaded " + loaded + " previously stored messages.");
+        }
         
         System.out.println("========================================");
         System.out.println("    WELCOME TO CHAT APP - FINAL");
@@ -189,21 +192,27 @@ public class ChatAppPart3 {
                 case 1:
                     result = messages[i].sendMessage("send");
                     System.out.println(result);
-                    // Add to SentMessages array
+                    // ============================================
+                    // CRITICAL: Add to SentMessages array
+                    // ============================================
                     manager.addSentMessage(text, hash, messages[i].getMessageId(), recipient);
                     break;
                 case 2:
                     result = messages[i].sendMessage("disregard");
                     System.out.println(result);
-                    // Add to DisregardedMessages array
+                    // ============================================
+                    // CRITICAL: Add to DisregardedMessages array
+                    // ============================================
                     manager.addDisregardedMessage(text);
                     break;
                 case 3:
                     result = messages[i].sendMessage("store");
                     System.out.println(result);
-                    // Store to JSON file and add to StoredMessages array
-                    messages[i].storeMessage();
-                    manager.addStoredMessage(text, hash, messages[i].getMessageId(), recipient);
+                    // ============================================
+                    // CRITICAL: Store to JSON file AND add to StoredMessages array
+                    // ============================================
+                    messages[i].storeMessage();  // Write to JSON file
+                    manager.addStoredMessage(text, hash, messages[i].getMessageId(), recipient);  // Add to array
                     break;
                 default:
                     System.out.println("Invalid choice.");
@@ -245,36 +254,43 @@ public class ChatAppPart3 {
             
             switch(choice) {
                 case 1:
+                    // Display sender and recipient of all stored messages
                     System.out.println(manager.displayStoredMessages());
                     break;
                     
                 case 2:
+                    // Display the longest stored message
                     System.out.println(manager.findLongestMessage());
                     break;
                     
                 case 3:
+                    // Search for a message ID
                     System.out.print("Enter Message ID to search: ");
                     String searchId = scanner.nextLine();
                     System.out.println(manager.searchByMessageId(searchId));
                     break;
                     
                 case 4:
+                    // Search messages for a particular recipient
                     System.out.print("Enter Recipient to search: ");
                     String searchRecipient = scanner.nextLine();
                     System.out.println(manager.searchByRecipient(searchRecipient));
                     break;
                     
                 case 5:
+                    // Delete a message using message hash
                     System.out.print("Enter Message Hash to delete: ");
                     String deleteHash = scanner.nextLine();
                     System.out.println(manager.deleteByHash(deleteHash));
                     break;
                     
                 case 6:
+                    // Display full report
                     System.out.println(manager.displayReport());
                     break;
                     
                 case 7:
+                    // Quit
                     System.out.println("Thank you for using Chat App. Goodbye!");
                     running = false;
                     break;
