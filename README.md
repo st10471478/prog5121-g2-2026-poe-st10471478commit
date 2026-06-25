@@ -1,4 +1,4 @@
-# PROG5121 Programming 1A - Part 3: Store Data and Display Task Report
+# PROG5121 Programming 1A - Part 3
 
 **Student Name:** Asibonge Anelisa Sosibo  
 **Student Number:** ST10471478 
