@@ -20,13 +20,18 @@ import java.util.ArrayList;
  */
 public class MessageManager {
     
-    // Parallel arrays for message storage
+    // Parallel arrays for message storage - as required by assignment
     private ArrayList<String> sentMessages;
     private ArrayList<String> disregardedMessages;
     private ArrayList<String> storedMessages;
     private ArrayList<String> messageHashes;
     private ArrayList<String> messageIds;
     private ArrayList<String> recipients;
+    
+    // Counter for totals
+    private int totalSent;
+    private int totalDisregarded;
+    private int totalStored;
     
     /**
      * Constructor - initializes all parallel arrays
@@ -38,6 +43,9 @@ public class MessageManager {
         messageHashes = new ArrayList<>();
         messageIds = new ArrayList<>();
         recipients = new ArrayList<>();
+        totalSent = 0;
+        totalDisregarded = 0;
+        totalStored = 0;
     }
     
     /**
@@ -52,6 +60,7 @@ public class MessageManager {
         messageHashes.add(hash);
         messageIds.add(id);
         recipients.add(recipient);
+        totalSent++;
     }
     
     /**
@@ -60,6 +69,7 @@ public class MessageManager {
      */
     public void addDisregardedMessage(String message) {
         disregardedMessages.add(message);
+        totalDisregarded++;
     }
     
     /**
@@ -74,6 +84,7 @@ public class MessageManager {
         messageHashes.add(hash);
         messageIds.add(id);
         recipients.add(recipient);
+        totalStored++;
     }
     
     /**
@@ -179,6 +190,7 @@ public class MessageManager {
                 messageHashes.remove(i);
                 messageIds.remove(i);
                 recipients.remove(i);
+                totalStored--;
                 return "Message: \"" + deletedMessage + "\" successfully deleted.";
             }
         }
@@ -190,19 +202,20 @@ public class MessageManager {
      * @return formatted report
      */
     public String displayReport() {
-        if (storedMessages.isEmpty()) {
-            return "No stored messages to display in report.";
+        if (storedMessages.isEmpty() && sentMessages.isEmpty() && disregardedMessages.isEmpty()) {
+            return "No messages to display in report.";
         }
         
         StringBuilder report = new StringBuilder();
         report.append("========================================\n");
         report.append("         MESSAGE REPORT\n");
         report.append("========================================\n\n");
-        report.append("Total Sent Messages: ").append(sentMessages.size()).append("\n");
-        report.append("Total Disregarded Messages: ").append(disregardedMessages.size()).append("\n");
-        report.append("Total Stored Messages: ").append(storedMessages.size()).append("\n\n");
+        report.append("Total Sent Messages: ").append(totalSent).append("\n");
+        report.append("Total Disregarded Messages: ").append(totalDisregarded).append("\n");
+        report.append("Total Stored Messages: ").append(totalStored).append("\n\n");
         report.append("--- Full Details ---\n\n");
         
+        // Show all stored messages in report
         for (int i = 0; i < storedMessages.size(); i++) {
             report.append("Message ID: ").append(messageIds.get(i)).append("\n");
             report.append("Message Hash: ").append(messageHashes.get(i)).append("\n");
@@ -251,6 +264,7 @@ public class MessageManager {
                 messageIds.add(id);
                 recipients.add(recipient);
                 messageHashes.add(hash);
+                totalStored++;
                 
                 count++;
             }
@@ -287,5 +301,17 @@ public class MessageManager {
     
     public ArrayList<String> getRecipients() {
         return recipients;
+    }
+    
+    public int getTotalSent() {
+        return totalSent;
+    }
+    
+    public int getTotalDisregarded() {
+        return totalDisregarded;
+    }
+    
+    public int getTotalStored() {
+        return totalStored;
     }
 }
